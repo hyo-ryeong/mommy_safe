@@ -7,27 +7,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Pretendard',sans-serif;background:#0f1117;color:#e8e9ed;min-height:100vh;padding:24px}
+body{font-family:'Pretendard',sans-serif;background:#0f1117;color:#e8e9ed;min-height:100vh;padding:36px}
 .top{display:flex;align-items:center;gap:12px;margin-bottom:24px}
-.logo{font-size:13px;font-weight:600;color:#fff;background:#1e2030;border:1px solid #2a2d3e;border-radius:8px;padding:6px 12px}
-.page-title{font-size:18px;font-weight:600;color:#fff}
+.logo{font-size:16px;font-weight:600;color:#fff;background:#1e2030;border:1px solid #2a2d3e;border-radius:8px;padding:6px 12px}
+.page-title{font-size:26px;font-weight:600;color:#fff}
 
 .controls{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.month-nav{display:flex;align-items:center;gap:8px}
-.nav-btn{padding:5px 12px;border-radius:8px;border:1px solid #2a2d3e;background:#1a1d2e;color:#8b8fa8;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.month-nav{display:flex;align-items:center;gap:12px}
+.nav-btn{padding:5px 12px;border-radius:8px;border:1px solid #2a2d3e;background:#1a1d2e;color:#8b8fa8;font-size:26px;cursor:pointer;font-family:inherit;transition:all .15s}
 .nav-btn:hover{background:#252840;color:#e8e9ed}
-.month-label{font-size:15px;font-weight:600;color:#fff;min-width:110px;text-align:center}
-.today-btn{padding:5px 12px;border-radius:8px;border:1px solid #3d5afe44;background:#1e2540;color:#7c9bff;font-size:11px;cursor:pointer;font-family:inherit}
+.month-label{font-size:26px;font-weight:600;color:#fff;min-width:110px;text-align:center}
+.today-btn{padding:5px 12px;border-radius:8px;border:1px solid #3d5afe44;background:#1e2540;color:#7c9bff;font-size:17px;cursor:pointer;font-family:inherit}
 
 /* calendar */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.day-name{font-size:10px;color:#4a4f6a;text-align:center;padding:4px 0;font-weight:500;letter-spacing:.5px}
+.day-name{font-size:17px;color:#4a4f6a;text-align:center;padding:4px 0;font-weight:500;letter-spacing:.5px}
 .cal-cell{min-height:72px;border-radius:10px;border:1px solid #1e2030;background:#13151f;padding:6px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
 .cal-cell:hover{border-color:#2a2d3e;background:#1a1d2e}
 .cal-cell.today{border-color:#3d5afe;background:#1e2540}
 .cal-cell.other{opacity:.3}
 .cal-cell.selected{border-color:#3d5afe44;background:#1a1d2e}
-.cal-date{font-size:11px;color:#4a4f6a;margin-bottom:4px}
+.cal-date{font-size:17px;color:#4a4f6a;margin-bottom:4px}
 .cal-cell.today .cal-date{color:#7c9bff;font-weight:600}
 .cal-tag{font-size:9px;padding:2px 5px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;font-weight:500}
 .t-p1{background:#1a1535;color:#a89cf7;border-left:2px solid #3d2fa0}
@@ -37,10 +37,10 @@ body{font-family:'Pretendard',sans-serif;background:#0f1117;color:#e8e9ed;min-he
 
 /* detail */
 .detail{margin-top:16px;background:#1a1d2e;border:1px solid #2a2d3e;border-radius:14px;padding:18px;min-height:100px}
-.detail-date{font-size:11px;color:#4a4f6a;margin-bottom:6px}
-.detail-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:12px}
+.detail-date{font-size:17px;color:#4a4f6a;margin-bottom:6px}
+.detail-title{font-size:19px;font-weight:600;color:#fff;margin-bottom:16px}
 .task-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.task{display:flex;gap:7px;align-items:flex-start;font-size:12px;color:#8b8fa8;line-height:1.5}
+.task{display:flex;gap:7px;align-items:flex-start;font-size:26px;color:#8b8fa8;line-height:1.5}
 .task-check{width:14px;height:14px;border-radius:4px;border:1px solid #2a2d3e;background:#13151f;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
 .task-check.done{background:#1d6e52;border-color:#1d6e52}
 .task-check.done::after{content:'✓';font-size:9px;color:#4ecba0}
@@ -48,7 +48,7 @@ body{font-family:'Pretendard',sans-serif;background:#0f1117;color:#e8e9ed;min-he
 
 /* legend */
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#6b6f88}
+.legend-item{display:flex;align-items:center;gap:10px;font-size:17px;color:#6b6f88}
 .legend-bar{width:14px;height:10px;border-radius:2px}
 </style>
 </head>
@@ -65,7 +65,7 @@ body{font-family:'Pretendard',sans-serif;background:#0f1117;color:#e8e9ed;min-he
     <button class="nav-btn" onclick="nextMonth()">→</button>
   </div>
   <button class="today-btn" onclick="goToday()">오늘로</button>
-  <span style="font-size:11px;color:#4a4f6a;margin-left:auto">날짜 클릭 → 상세보기</span>
+  <span style="font-size:17px;color:#4a4f6a;margin-left:auto">날짜 클릭 → 상세보기</span>
 </div>
 
 <div class="cal-grid" id="cal-grid"></div>
@@ -78,7 +78,7 @@ body{font-family:'Pretendard',sans-serif;background:#0f1117;color:#e8e9ed;min-he
 </div>
 
 <div class="detail" id="detail">
-  <div style="color:#4a4f6a;font-size:12px">📅 날짜를 클릭하면 해당 주 작업 상세가 표시됩니다</div>
+  <div style="color:#4a4f6a;font-size:26px">📅 날짜를 클릭하면 해당 주 작업 상세가 표시됩니다</div>
 </div>
 
 <script>
@@ -158,7 +158,7 @@ function render(){
 function showDet(key){
   selected=key;render();
   const d=details[key];
-  if(!d){document.getElementById('detail').innerHTML='<div style="color:#4a4f6a;font-size:12px">이 주에는 예정된 작업이 없습니다</div>';return;}
+  if(!d){document.getElementById('detail').innerHTML='<div style="color:#4a4f6a;font-size:26px">이 주에는 예정된 작업이 없습니다</div>';return;}
   const phaseColor=d.phase.includes('마일스톤')?'#f47c5a':d.phase.includes('1')?'#a89cf7':d.phase.includes('2')?'#4ecba0':'#f4b942';
   document.getElementById('detail').innerHTML=`
     <div class="detail-date"><span style="color:${phaseColor};font-weight:600">${d.phase}</span> · ${key}</div>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeRide — 시스템 아키텍처</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard',sans-serif;background:#0f1117;color:#e8e9ed;min-height:100vh;padding:36px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.logo{font-size:16px;font-weight:600;color:#fff;background:#1e2030;border:1px solid #2a2d3e;border-radius:8px;padding:6px 12px}
+.page-title{font-size:26px;font-weight:600;color:#fff}
+
+.arch{display:flex;flex-direction:column;gap:12px}
+.layer{border:1px solid #2a2d3e;border-radius:14px;padding:16px;background:#13151f}
+.layer-label{font-size:17px;font-weight:600;color:#4a4f6a;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
+.nodes{display:flex;gap:10px;flex-wrap:wrap}
+.node{border-radius:10px;padding:12px 14px;flex:1;min-width:130px;cursor:pointer;transition:all .2s;border:1px solid transparent}
+.node:hover{transform:translateY(-1px)}
+.node-title{font-size:26px;font-weight:600;margin-bottom:3px}
+.node-sub{font-size:17px;opacity:.7;line-height:1.4}
+
+.n-purple{background:#1a1535;border-color:#3d2fa0;color:#a89cf7}
+.n-teal{background:#0d1f1a;border-color:#1d6e52;color:#4ecba0}
+.n-amber{background:#1e1608;border-color:#7a5200;color:#f4b942}
+.n-blue{background:#0d1929;border-color:#1a4a8a;color:#6aaeff}
+.n-coral{background:#1f1010;border-color:#7a2a1a;color:#f47c5a}
+.n-green{background:#0e1a0d;border-color:#2d6b1a;color:#6ecf5a}
+.n-gray{background:#171920;border-color:#2a2d3e;color:#8b8fa8}
+
+/* arrows between layers */
+.arrow-layer{display:flex;align-items:center;justify-content:center;gap:16px;padding:0 8px}
+.arrow-item{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;max-width:160px}
+.arrow-line{height:24px;width:1px;background:linear-gradient(to bottom,#2a2d3e,#3d5afe);position:relative}
+.arrow-line::after{content:'▼';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);font-size:8px;color:#3d5afe}
+.arrow-label{font-size:17px;color:#4a4f6a;background:#13151f;border:1px solid #2a2d3e;border-radius:6px;padding:2px 8px}
+
+/* detail panel */
+.detail-panel{margin-top:16px;background:#1a1d2e;border:1px solid #2a2d3e;border-radius:12px;padding:16px;min-height:80px;transition:all .2s}
+.detail-title{font-size:19px;font-weight:600;color:#fff;margin-bottom:10px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.detail-row{display:flex;gap:12px;font-size:17px;color:#8b8fa8;align-items:flex-start;line-height:1.5}
+.detail-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:5px}
+
+/* legend */
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.legend-item{display:flex;align-items:center;gap:10px;font-size:17px;color:#6b6f88}
+.legend-dot{width:8px;height:8px;border-radius:2px}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="logo">🚌 SafeRide</span>
+  <span class="page-title">시스템 아키텍처</span>
+</div>
+
+<div class="arch">
+  <!-- Layer 1: Clients -->
+  <div class="layer">
+    <div class="layer-label">클라이언트 레이어</div>
+    <div class="nodes">
+      <div class="node n-purple" onclick="showDetail('child')">
+        <div class="node-title">자녀 웹앱 (React)</div>
+        <div class="node-sub">경로 설정 · 실시간 모니터링</div>
+      </div>
+      <div class="node n-teal" onclick="showDetail('parent')">
+        <div class="node-title">부모 웹앱 (링크 기반)</div>
+        <div class="node-sub">GPS 전송 · 하차 알림 수신</div>
+      </div>
+      <div class="node n-amber" onclick="showDetail('kakao')">
+        <div class="node-title">카카오톡 / FCM</div>
+        <div class="node-sub">푸시 알림 최종 수신</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrows 1→2 -->
+  <div class="arrow-layer">
+    <div class="arrow-item">
+      <div class="arrow-label">REST API</div>
+      <div class="arrow-line"></div>
+    </div>
+    <div class="arrow-item">
+      <div class="arrow-label">WebSocket</div>
+      <div class="arrow-line"></div>
+    </div>
+    <div class="arrow-item">
+      <div class="arrow-label">WebSocket (GPS)</div>
+      <div class="arrow-line"></div>
+    </div>
+  </div>
+
+  <!-- Layer 2: Backend -->
+  <div class="layer">
+    <div class="layer-label">백엔드 레이어 (Node.js)</div>
+    <div class="nodes">
+      <div class="node n-blue" onclick="showDetail('rest')">
+        <div class="node-title">REST API 서버</div>
+        <div class="node-sub">Express · Fastify</div>
+      </div>
+      <div class="node n-blue" onclick="showDetail('ws')">
+        <div class="node-title">WebSocket 서버</div>
+        <div class="node-sub">Socket.io · 실시간</div>
+      </div>
+      <div class="node n-coral" onclick="showDetail('engine')">
+        <div class="node-title">이벤트 엔진</div>
+        <div class="node-sub">탑승·이탈·하차 감지</div>
+      </div>
+      <div class="node n-amber" onclick="showDetail('notify')">
+        <div class="node-title">알림 서비스</div>
+        <div class="node-sub">FCM · 카카오 알림톡</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrows 2→3 -->
+  <div class="arrow-layer">
+    <div class="arrow-item">
+      <div class="arrow-label">경로 탐색</div>
+      <div class="arrow-line"></div>
+    </div>
+    <div class="arrow-item">
+      <div class="arrow-label">실시간 버스</div>
+      <div class="arrow-line"></div>
+    </div>
+    <div class="arrow-item">
+      <div class="arrow-label">알림 발송</div>
+      <div class="arrow-line"></div>
+    </div>
+  </div>
+
+  <!-- Layer 3: External -->
+  <div class="layer">
+    <div class="layer-label">외부 API 레이어</div>
+    <div class="nodes">
+      <div class="node n-green" onclick="showDetail('kakaoapi')">
+        <div class="node-title">카카오 모빌리티</div>
+        <div class="node-sub">대중교통 경로 탐색</div>
+      </div>
+      <div class="node n-green" onclick="showDetail('busapi')">
+        <div class="node-title">공공 버스 API</div>
+        <div class="node-sub">실시간 버스 위치</div>
+      </div>
+      <div class="node n-green" onclick="showDetail('subwayapi')">
+        <div class="node-title">서울 지하철 API</div>
+        <div class="node-sub">열린데이터광장</div>
+      </div>
+      <div class="node n-amber" onclick="showDetail('alimtalk')">
+        <div class="node-title">카카오 알림톡</div>
+        <div class="node-sub">템플릿 기반 발송</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrows 2→4 -->
+  <div class="arrow-layer">
+    <div class="arrow-item">
+      <div class="arrow-label">ORM (Prisma)</div>
+      <div class="arrow-line"></div>
+    </div>
+    <div class="arrow-item">
+      <div class="arrow-label">캐시 R/W</div>
+      <div class="arrow-line"></div>
+    </div>
+  </div>
+
+  <!-- Layer 4: Data -->
+  <div class="layer">
+    <div class="layer-label">데이터 레이어</div>
+    <div class="nodes">
+      <div class="node n-blue" onclick="showDetail('postgres')">
+        <div class="node-title">PostgreSQL</div>
+        <div class="node-sub">users · sessions · waypoints · events</div>
+      </div>
+      <div class="node n-coral" onclick="showDetail('redis')">
+        <div class="node-title">Redis</div>
+        <div class="node-sub">실시간 위치 캐시 · 소켓 세션</div>
+      </div>
+      <div class="node n-gray" onclick="showDetail('infra')">
+        <div class="node-title">인프라</div>
+        <div class="node-sub">Railway · Docker · GitHub Actions</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="detail-panel" id="detail-panel">
+  <div style="color:#4a4f6a;font-size:26px">📌 노드를 클릭하면 상세 정보가 표시됩니다</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#3d2fa0"></div>자녀 클라이언트</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1d6e52"></div>부모 클라이언트</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1a4a8a"></div>백엔드 서비스</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7a2a1a"></div>이벤트 처리</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#2d6b1a"></div>외부 API</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7a5200"></div>알림</div>
+</div>
+
+<script>
+const details={
+  child:{title:'자녀 웹앱 (React + Vite)',items:['React + Vite 기반 SPA','Zustand 상태관리','Kakao Maps SDK 지도','PWA 설정 (홈화면 추가)','Vercel 배포']},
+  parent:{title:'부모 웹앱 (링크 기반)',items:['동일 React 앱 내 별도 라우트 /ride/:token','모바일 특화 UI (글자 18pt+, 터치 48px+)','GPS 위치 수집 → WebSocket 전송','진동 + 음성 하차 알림','앱 설치 불필요']},
+  kakao:{title:'카카오톡 / FCM 알림',items:['탑승 완료 알림: "[엄마] 버스에 타셨어요 🚌"','이탈 알림: "[엄마] 경로를 벗어나고 있어요 ⚠️"','도착 알림: "[엄마] 목적지에 도착하셨어요 ✅"','Idle 알림: "5분째 위치가 업데이트되지 않아요"']},
+  rest:{title:'REST API 서버',items:['POST /api/routes/search — 경로 탐색','POST /api/sessions — 세션 생성 + 토큰 발급','GET /api/sessions/:id — 세션 상태 조회','GET /api/sessions/parent/:token — 부모 진입','POST /api/auth/register·login — 인증']},
+  ws:{title:'WebSocket 서버 (Socket.io)',items:['location:update — 부모→서버 GPS 전송','location:broadcast — 서버→자녀 위치 전달','trip:boarded — 탑승 감지 알림','trip:alight_soon — 하차 준비 알림','trip:deviated — 경로 이탈 알림','trip:idle — 위치 미갱신 경고']},
+  engine:{title:'이벤트 엔진',items:['탑승 감지: 정류장 반경 50m + 속도 > 5km/h','하차 알림: N정거장 전 도달 시 트리거','이탈 감지: 경로 반경 200m + 30초 지속','Idle 감지: 5분 이상 위치 미갱신','Redis에서 최신 위치 조회 후 규칙 평가']},
+  notify:{title:'알림 서비스',items:['카카오 알림톡: 템플릿 기반 구조화 메시지','FCM: 네이티브 앱 전환 후 사용','이벤트 엔진에서 트리거','실패 시 재시도 로직 (3회)','발송 이력 DB 기록']},
+  kakaoapi:{title:'카카오 모빌리티 API',items:['대중교통 경로 탐색 (환승 포함)','일 10만 건 무료','응답: legs[] 배열로 구간별 파싱','정류장 좌표 추출 → waypoints DB 저장']},
+  busapi:{title:'공공데이터포털 버스 API',items:['실시간 버스 위치 (국토부)','노선별 현재 버스 위치','정류장 도착 예정 시간','무료 사용 가능']},
+  subwayapi:{title:'서울 열린데이터광장 지하철 API',items:['서울 지하철 실시간 위치','역별 도착 예정 정보','무료 사용 가능','수도권 외 별도 API 필요']},
+  alimtalk:{title:'카카오 알림톡',items:['카카오 비즈니스 채널 필요','템플릿 사전 심사 필요 (3~7일)','건당 약 7~15원','부모 카카오톡으로 발송']},
+  postgres:{title:'PostgreSQL (Prisma ORM)',items:['users: 자녀 계정','sessions: 이동 세션 (상태: waiting/active/completed)','waypoints: 경유 정류장 시퀀스','events: 탑승·이탈·도착 이벤트 로그','location_logs: GPS 기록 (세션 완료 시 삭제)']},
+  redis:{title:'Redis',items:['최신 GPS 위치 캐시 (Key: session:{id}:location)','소켓 세션 매핑 (parentToken → socketId)','TTL: 세션 종료 시 자동 삭제','이벤트 엔진의 실시간 위치 조회']},
+  infra:{title:'인프라',items:['Railway: 백엔드 + PostgreSQL + Redis 무료 플랜','Vercel: 프론트엔드 배포','GitHub Actions: PR → 자동 빌드/배포','Sentry: 에러 모니터링 (Phase 2)','Prisma Migrate: DB 스키마 관리']},
+};
+
+function showDetail(key){
+  const d=details[key];
+  if(!d)return;
+  document.getElementById('detail-panel').innerHTML=`
+    <div class="detail-title">📋 ${d.title}</div>
+    <div class="detail-grid">${d.items.map(it=>`
+      <div class="detail-row"><div class="detail-dot" style="background:#3d5afe"></div><span>${it}</span></div>
+    `).join('')}</div>
+  `;
+}
+</script>
+</body>
+</html>
