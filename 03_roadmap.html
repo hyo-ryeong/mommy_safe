@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeRide — 로드맵</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard',sans-serif;background:#0f1117;color:#e8e9ed;min-height:100vh;padding:24px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.logo{font-size:13px;font-weight:600;color:#fff;background:#1e2030;border:1px solid #2a2d3e;border-radius:8px;padding:6px 12px}
+.page-title{font-size:18px;font-weight:600;color:#fff}
+
+.controls{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.month-nav{display:flex;align-items:center;gap:8px}
+.nav-btn{padding:5px 12px;border-radius:8px;border:1px solid #2a2d3e;background:#1a1d2e;color:#8b8fa8;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.nav-btn:hover{background:#252840;color:#e8e9ed}
+.month-label{font-size:15px;font-weight:600;color:#fff;min-width:110px;text-align:center}
+.today-btn{padding:5px 12px;border-radius:8px;border:1px solid #3d5afe44;background:#1e2540;color:#7c9bff;font-size:11px;cursor:pointer;font-family:inherit}
+
+/* calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.day-name{font-size:10px;color:#4a4f6a;text-align:center;padding:4px 0;font-weight:500;letter-spacing:.5px}
+.cal-cell{min-height:72px;border-radius:10px;border:1px solid #1e2030;background:#13151f;padding:6px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.cal-cell:hover{border-color:#2a2d3e;background:#1a1d2e}
+.cal-cell.today{border-color:#3d5afe;background:#1e2540}
+.cal-cell.other{opacity:.3}
+.cal-cell.selected{border-color:#3d5afe44;background:#1a1d2e}
+.cal-date{font-size:11px;color:#4a4f6a;margin-bottom:4px}
+.cal-cell.today .cal-date{color:#7c9bff;font-weight:600}
+.cal-tag{font-size:9px;padding:2px 5px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;font-weight:500}
+.t-p1{background:#1a1535;color:#a89cf7;border-left:2px solid #3d2fa0}
+.t-p2{background:#0d1f1a;color:#4ecba0;border-left:2px solid #1d6e52}
+.t-p3{background:#1e1608;color:#f4b942;border-left:2px solid #7a5200}
+.t-ms{background:#1f1010;color:#f47c5a;border-left:2px solid #7a2a1a;font-weight:600}
+
+/* detail */
+.detail{margin-top:16px;background:#1a1d2e;border:1px solid #2a2d3e;border-radius:14px;padding:18px;min-height:100px}
+.detail-date{font-size:11px;color:#4a4f6a;margin-bottom:6px}
+.detail-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:12px}
+.task-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.task{display:flex;gap:7px;align-items:flex-start;font-size:12px;color:#8b8fa8;line-height:1.5}
+.task-check{width:14px;height:14px;border-radius:4px;border:1px solid #2a2d3e;background:#13151f;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.task-check.done{background:#1d6e52;border-color:#1d6e52}
+.task-check.done::after{content:'✓';font-size:9px;color:#4ecba0}
+.task.done-task .task-text{text-decoration:line-through;opacity:.5}
+
+/* legend */
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#6b6f88}
+.legend-bar{width:14px;height:10px;border-radius:2px}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="logo">🚌 SafeRide</span>
+  <span class="page-title">로드맵</span>
+</div>
+
+<div class="controls">
+  <div class="month-nav">
+    <button class="nav-btn" onclick="prevMonth()">←</button>
+    <span class="month-label" id="month-label"></span>
+    <button class="nav-btn" onclick="nextMonth()">→</button>
+  </div>
+  <button class="today-btn" onclick="goToday()">오늘로</button>
+  <span style="font-size:11px;color:#4a4f6a;margin-left:auto">날짜 클릭 → 상세보기</span>
+</div>
+
+<div class="cal-grid" id="cal-grid"></div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-bar" style="background:#1a1535;border-left:2px solid #3d2fa0"></div>Phase 1 MVP</div>
+  <div class="legend-item"><div class="legend-bar" style="background:#0d1f1a;border-left:2px solid #1d6e52"></div>Phase 2 안정화</div>
+  <div class="legend-item"><div class="legend-bar" style="background:#1e1608;border-left:2px solid #7a5200"></div>Phase 3 성장</div>
+  <div class="legend-item"><div class="legend-bar" style="background:#1f1010;border-left:2px solid #7a2a1a"></div>마일스톤</div>
+</div>
+
+<div class="detail" id="detail">
+  <div style="color:#4a4f6a;font-size:12px">📅 날짜를 클릭하면 해당 주 작업 상세가 표시됩니다</div>
+</div>
+
+<script>
+const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+const DAYS=['일','월','화','수','목','금','토'];
+const TODAY=new Date();
+let Y=2025,M=5,selected=null;
+const taskDone={};
+
+const events={
+  '2025-06-02':[{type:'t-p1',label:'프로젝트 셋업'}],
+  '2025-06-09':[{type:'t-p1',label:'카카오 API 연동'}],
+  '2025-06-16':[{type:'t-p1',label:'세션·공유 링크'}],
+  '2025-06-23':[{type:'t-p1',label:'부모 웹앱 UI'}],
+  '2025-06-30':[{type:'t-ms',label:'★ MVP 알파'}],
+  '2025-07-07':[{type:'t-p1',label:'WebSocket 위치'}],
+  '2025-07-14':[{type:'t-p1',label:'탑승 감지 로직'}],
+  '2025-07-21':[{type:'t-p1',label:'하차·도착 알림'}],
+  '2025-07-28':[{type:'t-ms',label:'★ MVP 베타 출시'}],
+  '2025-08-04':[{type:'t-p2',label:'경로 이탈 감지'}],
+  '2025-08-11':[{type:'t-p2',label:'Idle 감지'}],
+  '2025-08-18':[{type:'t-p2',label:'환승 자동 추적'}],
+  '2025-08-25':[{type:'t-p2',label:'Sentry 모니터링'}],
+  '2025-09-01':[{type:'t-ms',label:'★ 정식 v1.0'}],
+  '2025-09-08':[{type:'t-p2',label:'UI 개선'}],
+  '2025-10-06':[{type:'t-p3',label:'iOS 앱 개발'}],
+  '2025-11-03':[{type:'t-p3',label:'Android 앱'}],
+  '2025-12-01':[{type:'t-ms',label:'★ 네이티브 앱 출시'}],
+};
+
+const details={
+  '2025-06-02':{phase:'Phase 1',title:'프로젝트 셋업',tasks:['모노레포 구성 (pnpm workspaces)','ESLint · Prettier 설정','PostgreSQL + Prisma 스키마 초안','Railway 배포 환경 구성','GitHub Actions CI/CD 기초']},
+  '2025-06-09':{phase:'Phase 1',title:'카카오 API 연동',tasks:['카카오 모빌리티 API 키 발급','경로 탐색 엔드포인트 구현','정류장 좌표 파싱 로직','프론트 경로 목록 UI','API 응답 캐싱 설정']},
+  '2025-06-16':{phase:'Phase 1',title:'세션 & 공유 링크',tasks:['UUID 토큰 기반 세션 생성','/ride/:token 라우트 구현','카카오톡 공유 API 연동','SMS 공유 fallback','세션 만료 (24시간) 처리']},
+  '2025-06-23':{phase:'Phase 1',title:'부모 웹앱 UI',tasks:['18pt 이상 큰 글씨 UI','GPS 권한 요청 화면','탑승 확인 버튼 컴포넌트','PWA 홈 화면 추가 유도','다크모드 대응']},
+  '2025-06-30':{phase:'마일스톤',title:'MVP 알파 — 내부 테스트',tasks:['가족 내부 테스트 진행','버그 수집 및 우선순위 정리','피드백 반영 패치','알파 완료 리뷰 미팅','다음 스프린트 계획']},
+  '2025-07-07':{phase:'Phase 1',title:'WebSocket 위치 추적',tasks:['Socket.io 서버 설정','위치 데이터 Redis 캐싱','자녀 지도 실시간 업데이트','연결 끊김 재연결 로직','위치 갱신 주기 최적화']},
+  '2025-07-14':{phase:'Phase 1',title:'탑승 감지',tasks:['정류장 반경 50m 진입 감지','속도 > 5km/h 조건 추가','탑승 이벤트 DB 기록','자녀 FCM 알림 발송','오탐지 필터링 로직']},
+  '2025-07-21':{phase:'Phase 1',title:'하차·도착 알림',tasks:['N정거장 전 하차 알림 로직','부모 기기 진동 + 큰 화면','목적지 도착 감지 (반경 100m)','세션 완료 및 데이터 삭제','자녀 도착 알림 발송']},
+  '2025-07-28':{phase:'마일스톤',title:'MVP 베타 출시',tasks:['소규모 사용자 5~10명 초대','NPS 설문 진행','크리티컬 버그 핫픽스','베타 피드백 정리','Phase 2 우선순위 확정']},
+  '2025-08-04':{phase:'Phase 2',title:'경로 이탈 감지',tasks:['경로 폴리라인 생성 로직','200m 이탈 + 30초 지속 조건','자녀 이탈 알림 발송','부모 기기 안내 메시지','이탈 이벤트 DB 기록']},
+  '2025-08-11':{phase:'Phase 2',title:'Idle 감지',tasks:['5분 위치 미갱신 감지','자녀 경고 알림','부모 앱 재활성화 푸시','에스컬레이션 로직 (10분)','Idle 이벤트 기록']},
+  '2025-08-18':{phase:'Phase 2',title:'환승 자동 추적',tasks:['다중 구간 상태머신 설계','환승 정류장 대기 감지','구간별 탑승/하차 순차 처리','환승 UI 업데이트','멀티 구간 테스트']},
+  '2025-08-25':{phase:'Phase 2',title:'모니터링 & 안정화',tasks:['Sentry 에러 추적 설정','Mixpanel UX 이벤트','성능 병목 프로파일링','로드 테스트','SLA 목표 설정']},
+  '2025-09-01':{phase:'마일스톤',title:'정식 v1.0 출시',tasks:['프레스킷 준비','ProductHunt 등록','SNS 런치 포스팅','초기 유저 피드백 수집','미디어 아웃리치']},
+  '2025-09-08':{phase:'Phase 2',title:'UI 개선',tasks:['사용성 테스트 반영','접근성 개선 (WCAG)','성능 최적화 (Core Web Vitals)','애니메이션 세부 조정','다국어 대응 검토']},
+  '2025-10-06':{phase:'Phase 3',title:'iOS 네이티브 앱',tasks:['React Native or Swift 결정','배경 위치 추적 구현','APNs 푸시 설정','App Store 심사 준비','TestFlight 베타']},
+  '2025-11-03':{phase:'Phase 3',title:'Android 앱',tasks:['React Native 공유 코드','FCM 백그라운드 최적화','Play Store 등록','크로스 플랫폼 테스트','접근성 심사']},
+  '2025-12-01':{phase:'마일스톤',title:'네이티브 앱 출시',tasks:['App Store + Play Store 출시','수익화 A/B 테스트','구독 결제 모듈','성과 지표 리뷰','2026 로드맵 수립']},
+};
+
+function dk(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+function render(){
+  document.getElementById('month-label').textContent=`${Y}년 ${MONTHS[M]}`;
+  const grid=document.getElementById('cal-grid');
+  grid.innerHTML=DAYS.map(d=>`<div class="day-name">${d}</div>`).join('');
+  const first=new Date(Y,M,1).getDay();
+  const dim=new Date(Y,M+1,0).getDate();
+  const dimp=new Date(Y,M,0).getDate();
+  const total=Math.ceil((first+dim)/7)*7;
+  for(let i=0;i<total;i++){
+    let d,m,y,other=false;
+    if(i<first){d=dimp-first+i+1;m=M-1;y=Y;if(m<0){m=11;y--;}other=true;}
+    else if(i>=first+dim){d=i-first-dim+1;m=M+1;y=Y;if(m>11){m=0;y++;}other=true;}
+    else{d=i-first+1;m=M;y=Y;}
+    const isToday=d===TODAY.getDate()&&m===TODAY.getMonth()&&y===TODAY.getFullYear();
+    const key=dk(y,m,d);
+    const evts=(!other&&events[key])||[];
+    const isSel=selected===key;
+    grid.innerHTML+=`<div class="cal-cell${other?' other':''}${isToday?' today':''}${isSel?' selected':''}" onclick="${other?'':'showDet(\''+key+'\')'}" >
+      <div class="cal-date">${d}</div>
+      ${evts.map(e=>`<span class="cal-tag ${e.type}">${e.label}</span>`).join('')}
+    </div>`;
+  }
+}
+
+function showDet(key){
+  selected=key;render();
+  const d=details[key];
+  if(!d){document.getElementById('detail').innerHTML='<div style="color:#4a4f6a;font-size:12px">이 주에는 예정된 작업이 없습니다</div>';return;}
+  const phaseColor=d.phase.includes('마일스톤')?'#f47c5a':d.phase.includes('1')?'#a89cf7':d.phase.includes('2')?'#4ecba0':'#f4b942';
+  document.getElementById('detail').innerHTML=`
+    <div class="detail-date"><span style="color:${phaseColor};font-weight:600">${d.phase}</span> · ${key}</div>
+    <div class="detail-title">${d.title}</div>
+    <div class="task-grid">${d.tasks.map((t,i)=>{
+      const tid=key+'-'+i;
+      const done=taskDone[tid];
+      return`<div class="task${done?' done-task':''}" onclick="toggleTask('${tid}',this)">
+        <div class="task-check${done?' done':''}"></div>
+        <span class="task-text">${t}</span>
+      </div>`;
+    }).join('')}</div>
+  `;
+}
+
+function toggleTask(tid,el){
+  taskDone[tid]=!taskDone[tid];
+  el.classList.toggle('done-task',taskDone[tid]);
+  el.querySelector('.task-check').classList.toggle('done',taskDone[tid]);
+  el.querySelector('.task-text').style.textDecoration=taskDone[tid]?'line-through':'none';
+  el.querySelector('.task-text').style.opacity=taskDone[tid]?'.5':'1';
+}
+
+function prevMonth(){M--;if(M<0){M=11;Y--;}selected=null;render();}
+function nextMonth(){M++;if(M>11){M=0;Y++;}selected=null;render();}
+function goToday(){Y=TODAY.getFullYear();M=TODAY.getMonth();selected=null;render();}
+render();
+</script>
+</body>
+</html>

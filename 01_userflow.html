@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeRide — 유저플로우</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard',sans-serif;background:#0f1117;color:#e8e9ed;min-height:100vh;padding:24px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.logo{font-size:13px;font-weight:600;color:#fff;background:#1e2030;border:1px solid #2a2d3e;border-radius:8px;padding:6px 12px;letter-spacing:.5px}
+.page-title{font-size:18px;font-weight:600;color:#fff}
+.tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:7px 18px;border-radius:20px;border:1px solid #2a2d3e;font-size:13px;cursor:pointer;background:#1a1d2e;color:#8b8fa8;transition:all .2s;font-family:inherit}
+.tab.active{background:#3d5afe;color:#fff;border-color:#3d5afe}
+.tab:hover:not(.active){background:#252840;color:#c0c3d4}
+
+/* steps */
+.steps-wrap{overflow-x:auto;padding-bottom:8px}
+.steps-row{display:flex;align-items:stretch;gap:0;min-width:600px}
+.step{flex:1;background:#1a1d2e;border:1px solid #2a2d3e;border-radius:12px;padding:14px 12px;cursor:pointer;transition:all .2s;opacity:.5;position:relative}
+.step.active{opacity:1;border-color:#3d5afe;background:#1e2540}
+.step.active::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #3d5afe}
+.step:hover:not(.active){opacity:.8}
+.step-num{font-size:10px;color:#4a4f6a;margin-bottom:6px;font-weight:500}
+.step-icon{font-size:20px;margin-bottom:6px}
+.step-title{font-size:12px;font-weight:600;color:#e8e9ed;margin-bottom:3px}
+.step-sub{font-size:10px;color:#6b6f88;line-height:1.4}
+.arrow{display:flex;align-items:center;justify-content:center;width:20px;flex-shrink:0;color:#3a3d52;font-size:16px}
+
+/* detail */
+.detail{margin-top:20px;background:#1a1d2e;border:1px solid #2a2d3e;border-radius:14px;padding:20px;min-height:110px}
+.detail-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.detail-items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.detail-item{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:#8b8fa8;line-height:1.5}
+.detail-dot{width:5px;height:5px;border-radius:50%;background:#3d5afe;flex-shrink:0;margin-top:5px}
+.nav-row{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.nav-btn{padding:7px 16px;border-radius:8px;border:1px solid #2a2d3e;background:#1a1d2e;color:#8b8fa8;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.nav-btn:hover{background:#252840;color:#e8e9ed}
+
+/* exception grid */
+.exc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+.exc-card{background:#1a1d2e;border:1px solid #2a2d3e;border-radius:12px;padding:14px}
+.exc-card-title{font-size:12px;font-weight:600;color:#e8e9ed;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.exc-step{display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#8b8fa8;padding:4px 0;border-bottom:1px solid #1e2030;line-height:1.4}
+.exc-step:last-child{border-bottom:none}
+.exc-num{color:#3d5afe;font-weight:600;flex-shrink:0;font-size:10px;margin-top:1px}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:6px}
+.badge-warn{background:rgba(255,160,0,.15);color:#ffb300}
+.badge-danger{background:rgba(244,67,54,.15);color:#ef5350}
+.badge-info{background:rgba(61,90,254,.15);color:#7c9bff}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="logo">🚌 SafeRide</span>
+  <span class="page-title">유저플로우</span>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showFlow('child')">자녀 플로우</button>
+  <button class="tab" onclick="showFlow('parent')">부모 플로우</button>
+  <button class="tab" onclick="showFlow('exception')">예외 처리</button>
+</div>
+
+<div id="flow-child">
+  <div class="steps-wrap"><div class="steps-row" id="child-steps"></div></div>
+  <div class="detail" id="child-detail"></div>
+  <div class="nav-row">
+    <button class="nav-btn" onclick="move('child',-1)">← 이전</button>
+    <button class="nav-btn" onclick="move('child',1)">다음 →</button>
+  </div>
+</div>
+<div id="flow-parent" style="display:none">
+  <div class="steps-wrap"><div class="steps-row" id="parent-steps"></div></div>
+  <div class="detail" id="parent-detail"></div>
+  <div class="nav-row">
+    <button class="nav-btn" onclick="move('parent',-1)">← 이전</button>
+    <button class="nav-btn" onclick="move('parent',1)">다음 →</button>
+  </div>
+</div>
+<div id="flow-exception" style="display:none">
+  <div class="exc-grid" id="exc-grid"></div>
+</div>
+
+<script>
+const flows={
+  child:{cur:0,steps:[
+    {icon:'📍',title:'경로 입력',sub:'출발지 / 목적지',detail:'카카오 API로 최적 대중교통 경로를 검색합니다.',items:['카카오 모빌리티 API 호출','버스·지하철 복합 경로 제공','예상 소요 시간 표시','환승 횟수 표시']},
+    {icon:'🗺️',title:'경로 선택',sub:'추천 경로 확인',detail:'선택한 경로의 정류장 정보를 저장합니다.',items:['구간별 정류장 목록 파싱','환승 포인트 자동 추출','WebSocket 세션 준비','DB에 waypoints 저장']},
+    {icon:'📤',title:'경로 공유',sub:'링크 → 카카오톡',detail:'고유 토큰 링크를 생성해 부모님께 전송합니다.',items:['UUID 토큰 발급','공유 URL 생성: /ride/{token}','카카오톡 공유 API 연동','SMS fallback 지원']},
+    {icon:'⏳',title:'대기 중',sub:'부모 탑승 모니터링',detail:'부모님 GPS 활성화 시 실시간 수신을 시작합니다.',items:['WebSocket 연결 대기','링크 미열람 시 30분 후 알림','지도에 부모 위치 표시','세션 상태 실시간 업데이트']},
+    {icon:'🔔',title:'탑승 알림',sub:'탑승 감지 → 푸시',detail:'탑승 감지 시 자녀에게 즉시 알림을 발송합니다.',items:['정류장 반경 50m + 속도 감지','FCM 또는 카카오 알림톡','탑승 시각 DB 기록','지도 추적 화면 전환']},
+    {icon:'✅',title:'도착 알림',sub:'목적지 도착 확인',detail:'도착 시 세션이 완료되고 최종 알림을 발송합니다.',items:['도착 반경 100m 이내 감지','자녀에게 도착 알림','위치 데이터 즉시 삭제','세션 completed 처리']},
+  ]},
+  parent:{cur:0,steps:[
+    {icon:'💬',title:'링크 수신',sub:'카카오톡 / 문자',detail:'링크 탭만으로 앱 설치 없이 웹앱에 진입합니다.',items:['링크 탭 → 브라우저 실행','토큰 기반 세션 자동 매핑','앱 설치 불필요 (MVP)','세션 정보 자동 로드']},
+    {icon:'📡',title:'GPS 허용',sub:'위치 권한 동의',detail:'큰 글씨로 GPS 권한을 요청합니다.',items:['브라우저 위치 권한 팝업','허용 안 할 경우 재안내','권한 허용 시 WebSocket 연결','위치 수집 주기: 10~30초']},
+    {icon:'🚌',title:'탑승',sub:'버스 / 지하철 승차',detail:'큰 글씨로 탑승 정보가 표시됩니다.',items:['출발 정류장 강조 표시','자동 감지 or 탑승 버튼','자녀에게 탑승 알림 발송','배터리 절약 모드 유지']},
+    {icon:'🧭',title:'이동 중',sub:'현재 위치 확인',detail:'남은 정거장 수가 실시간으로 표시됩니다.',items:['남은 정거장 카운트다운','현재 속도·방향 표시','배터리 절약 GPS 유지','환승 안내 자동 전환']},
+    {icon:'⚠️',title:'하차 알림',sub:'N 정거장 전 진동',detail:'하차 2정거장 전부터 진동+알림이 울립니다.',items:['진동 + 큰 글씨 알림','다음 정거장에서 내리세요!','환승 시 환승 안내로 전환','알림 재울림 30초 후']},
+    {icon:'📍',title:'도착',sub:'목적지 도착 확인',detail:'완료 화면과 함께 자녀에게 자동 알림이 발송됩니다.',items:['도착 완료 화면 표시','자녀에게 자동 알림','세션 종료 및 데이터 삭제','링크 만료 처리']},
+  ]},
+};
+const exceptions=[
+  {title:'환승 발생 시',badge:'badge-info',steps:['1구간 하차 알림 수신','하차 후 "XX번 버스로 환승" 안내','환승 정류장 대기 감지','2구간 자동 탑승 감지','2구간 하차 → 도착 알림']},
+  {title:'경로 이탈 시',badge:'badge-danger',steps:['경로 반경 200m 이탈 + 30초 지속','부모 기기: "경로를 벗어났어요" 알림','자녀에게 이탈 위치 알림 발송','자녀가 전화 or 앱 내 연락','재경로 or 수동 종료 선택']},
+  {title:'위치 미갱신 시',badge:'badge-warn',steps:['5분 이상 GPS 미갱신 감지','자녀에게 "위치 미확인" 알림','부모 기기: 앱 재활성화 유도','10분 후에도 미갱신 → 에스컬레이션','자녀에게 전화 유도 알림']},
+  {title:'링크 미열람 시',badge:'badge-info',steps:['공유 후 30분 경과 감지','자녀에게 "아직 출발 전" 알림','자녀가 재공유 or 전화','부모가 링크 열람 시 정상 플로우','세션 만료: 공유 후 24시간']},
+];
+
+function renderSteps(k){
+  const f=flows[k];
+  document.getElementById(k+'-steps').innerHTML=f.steps.map((s,i)=>`
+    <div class="step${i===f.cur?' active':''}" onclick="sel('${k}',${i})">
+      <div class="step-num">0${i+1}</div>
+      <div class="step-icon">${s.icon}</div>
+      <div class="step-title">${s.title}</div>
+      <div class="step-sub">${s.sub}</div>
+    </div>
+    ${i<f.steps.length-1?'<div class="arrow">›</div>':''}
+  `).join('');
+  const s=f.steps[f.cur];
+  document.getElementById(k+'-detail').innerHTML=`
+    <div class="detail-title">${s.icon} ${s.title} <span style="font-size:12px;color:#6b6f88;font-weight:400">— ${s.detail}</span></div>
+    <div class="detail-items">${s.items.map(it=>`<div class="detail-item"><div class="detail-dot"></div><span>${it}</span></div>`).join('')}</div>
+  `;
+}
+function sel(k,i){flows[k].cur=i;renderSteps(k);}
+function move(k,d){const f=flows[k];f.cur=Math.max(0,Math.min(f.steps.length-1,f.cur+d));renderSteps(k);}
+function showFlow(name){
+  ['child','parent','exception'].forEach(k=>document.getElementById('flow-'+k).style.display=k===name?'block':'none');
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['child','parent','exception'][i]===name));
+}
+function renderExc(){
+  document.getElementById('exc-grid').innerHTML=exceptions.map(e=>`
+    <div class="exc-card">
+      <div class="exc-card-title">⚡ ${e.title} <span class="badge ${e.badge}">${e.badge.includes('danger')?'긴급':e.badge.includes('warn')?'주의':'정보'}</span></div>
+      ${e.steps.map((s,i)=>`<div class="exc-step"><span class="exc-num">${i+1}</span><span>${s}</span></div>`).join('')}
+    </div>
+  `).join('');
+}
+renderSteps('child');renderSteps('parent');renderExc();
+</script>
+</body>
+</html>
